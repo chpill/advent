@@ -2,7 +2,8 @@
   (:require [advent.sixteen.a4 :as sut]
             [clojure.test :as t]
             [net.cgrand.xforms.io :as xforms-io]
-            [clojure.java.io :as java-io]))
+            [clojure.java.io :as java-io]
+            [criterium.core :as criterium]))
 
 
 (t/deftest grouping-regex
@@ -21,6 +22,7 @@
 (t/deftest checksums
   (t/are [encrypted-room expected-checksum]
       (= (-> encrypted-room sut/parse :room-letters sut/checksum-from-letters)
+         (-> encrypted-room sut/parse :room-letters sut/checksum-from-letters--xform-version)
          expected-checksum)
     "aaaaa-bbb-z-y-x-123[abxyz]" "abxyz"
     "a-b-c-d-e-f-g-h-987[abcde]" "abcde"))
@@ -44,4 +46,8 @@
 ;; (count (into [] input)) => 1066
 ;; (remove #(re-find sut/reg %) (into [] input)) => ()
 
+
+;; TODO benchmark
 (sut/sum-real-room-ids reducible-input)
+(sut/sum-real-room-ids--xform reducible-input)
+
