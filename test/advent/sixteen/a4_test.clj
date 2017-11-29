@@ -43,11 +43,74 @@
                          java-io/file
                          xforms-io/lines-in))
 
-;; (count (into [] input)) => 1066
-;; (remove #(re-find sut/reg %) (into [] input)) => ()
+;; Sanity check on the input
+(comment
+
+  (count (into [] reducible-input)) ;; 1066
+
+  (->> (into [] reducible-input)
+       (remove #(re-find sut/reg %))) ;; ()
+
+  )
 
 
-;; TODO benchmark
-(sut/sum-real-room-ids reducible-input)
-(sut/sum-real-room-ids--xform reducible-input)
+;; Benchmarks with or without transducers for the checksum function
+;; It seems that tranducers are slower here... not sure why
+(comment
+  (criterium/quick-bench
+   (sut/sum-real-room-ids reducible-input))
+  "Evaluation count : 24 in 6 samples of 4 calls.
+   Execution time mean : 28.600073 ms
+   Execution time std-deviation : 364.292962 µs
+   Execution time lower quantile : 28.309775 ms ( 2.5%)
+   Execution time upper quantile : 29.188787 ms (97.5%)
+   Overhead used : 6.115135 ns
+
+Found 1 outliers in 6 samples (16.6667 %)
+	low-severe	 1 (16.6667 %)
+ Variance from outliers : 13.8889 % Variance is moderately inflated by outliers "
+
+  (criterium/bench
+   (sut/sum-real-room-ids reducible-input))
+  "
+Evaluation count : 2160 in 60 samples of 36 calls.
+Execution time mean : 28.312274 ms
+Execution time std-deviation : 226.258612 µs
+Execution time lower quantile : 27.964026 ms ( 2.5%)
+Execution time upper quantile : 28.744894 ms (97.5%)
+Overhead used : 6.115135 ns
+
+Found 1 outliers in 60 samples (1.6667 %)
+	low-severe	 1 (1.6667 %)
+Variance from outliers : 1.6389 % Variance is slightly inflated by outliers "
+
+
+  (criterium/benchmark
+   (sut/sum-real-room-ids--xform reducible-input))
+
+  "
+  Evaluation count : 18 in 6 samples of 3 calls.
+  Execution time mean : 46.734310 ms
+  Execution time std-deviation : 422.224982 µs
+  Execution time lower quantile : 46.364802 ms ( 2.5%)
+  Execution time upper quantile : 47.332650 ms (97.5%)
+  Overhead used : 6.115135 ns "
+
+  (criterium/bench
+   (sut/sum-real-room-ids--xform reducible-input))
+  "
+Evaluation count : 1320 in 60 samples of 22 calls.
+Execution time mean : 46.907792 ms
+Execution time std-deviation : 645.295787 µs
+Execution time lower quantile : 46.229614 ms ( 2.5%)
+Execution time upper quantile : 48.595353 ms (97.5%)
+Overhead used : 6.115135 ns
+
+Found 3 outliers in 60 samples (5.0000 %)
+	low-severe	 3 (5.0000 %)
+ Variance from outliers : 1.6389 % Variance is slightly inflated by outliers
+"
+
+
+  )
 
