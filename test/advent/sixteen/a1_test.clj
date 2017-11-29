@@ -5,11 +5,11 @@
 
 
 
-(= 5 (a1/distance '(R2 L3)))
+(= 5 (a1/total-distance '(R2 L3)))
 
-(= 2 (a1/distance '(R2 R2 R2)))
+(= 2 (a1/total-distance '(R2 R2 R2)))
 
-(= 12 (a1/distance '(R5 L5 R5 R3)))
+(= 12 (a1/total-distance '(R5 L5 R5 R3)))
 
 
 (def instructions
@@ -17,4 +17,9 @@
 
 
 ;; Result => 288
-(a1/distance instructions)
+(a1/total-distance instructions)
+
+(= 4 (a1/headquarter-distance '(R8 R4 R4 R8)))
+
+;; Result => 111
+(a1/headquarter-distance instructions)
