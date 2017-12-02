@@ -20,6 +20,10 @@
 
 
 (t/deftest example-2
+  (t/is (= [4]
+           (sut/extract-evenly-divisible [5 9 2 8])))
   (t/is (= 9 (sut/checksum2 [[5 9 2 8]
                              [9 4 7 3]
                              [3 8 6 5]]))))
+
+(sut/checksum2 input)
