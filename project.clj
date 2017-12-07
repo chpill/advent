@@ -6,4 +6,5 @@
   :dependencies [[org.clojure/clojure "1.9.0-RC2"]
                  [net.cgrand/xforms "0.15.0"]
                  [criterium "0.4.4"]
-                 [digest "1.4.6"]])
+                 [digest "1.4.6"]
+                 [funcool/cuerdas "2.0.4"]])
