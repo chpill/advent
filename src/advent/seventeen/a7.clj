@@ -49,3 +49,28 @@
 
 (def root-program (name->program root-name))
 
+(defn total-weight [root-program]
+  (+ (:program/weight root-program)
+     (transduce (comp (map name->program)
+                      (map total-weight))
+                +
+                (:program/children root-program))))
+
+(defn find-corrupt-program [root-program expected-weight]
+  (let [child->weight (into {}
+                           (map (juxt identity (comp total-weight name->program)))
+                           (:program/children root-program))
+       weights-freq (frequencies (map second child->weight))]
+    (if-let [wrong-weight (some (fn [[k v]] (when (= 1 v) k))
+                                           weights-freq)]
+      (let [expected-weight (-> weights-freq (dissoc wrong-weight) ffirst)]
+
+        (recur (name->program ((set/map-invert child->weight) wrong-weight))
+               expected-weight))
+      (- expected-weight
+         (transduce (comp (map name->program)
+                          (map total-weight))
+                    +
+                    (:program/children root-program))))))
+
+(find-corrupt-program root-program :plop)
