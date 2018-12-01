@@ -8,18 +8,17 @@
 (defn refine [raw-input]
   (->> (str/lines raw-input)
        (map #(str/split % ": "))
-       (map (partial map #(Integer. %)))
-       (map (partial zipmap [:depth :scan-range]))))
+       (map (partial mapv #(Integer. %)))))
 
 (def input (refine raw-input))
 
 (defn scan-period [scan-range]
   (* 2 (dec scan-range)))
 
-(defn caught? [{:keys [depth scan-range]}]
+(defn caught? [[depth scan-range]]
   (zero? (mod depth (scan-period scan-range))))
 
-(defn severity [{:keys [depth scan-range]}]
+(defn severity [[depth scan-range]]
   (* depth scan-range))
 
 (def raw-example
@@ -46,3 +45,15 @@
            (some caught?))
     (recur (inc delay))
     delay))
+
+(defn caught?-2 [depth scan-range]
+  (zero? (mod depth (scan-period scan-range))))
+
+
+
+(time (some (fn [delay]
+         (when (not-any? (fn [[depth range]]
+                           (caught?-2 (+ depth delay) range))
+                         input-2)
+           delay))
+       (range)))
